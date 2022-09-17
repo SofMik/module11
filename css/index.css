@@ -47,6 +47,20 @@ input {
   max-width: 200px;
 }
 
+#color__input{
+  margin: 5px 10px 5px 0;
+  border: 0;
+  padding: 10px 19px;
+  line-height: 36px;
+  display: inline-block;
+  vertical-align: middle;
+  white-space: normal;
+  background: none;
+  background-color: #3cbc8d;
+  color: white;
+  max-width: 200px;
+}
+
 main {
   display: flex;
   flex-direction: row;
@@ -108,23 +122,47 @@ main {
 }
 
 .fruit_violet {
-  background: #8b00ff;
+  border: 10px solid #8b00ff;
 }
 
 .fruit_green {
-  background: #84cd1b;
+  border: 10px solid #84cd1b;
 }
 
 .fruit_carmazin {
-  background: #dc143c;
+  border: 10px solid #dc143c;
 }
 
 .fruit_yellow {
-  background: #ffd800;
+  border: 10px solid #ffd800;
 }
 
 .fruit_lightbrown {
-  background: #cd853f;
+  border: 10px solid #cd853f;
+}
+
+.fruit_pink {
+  border: 10px solid #eb54b1;
+}
+
+.fruit_red {
+  border: 10px solid #ff0000;
+}
+
+.fruit_brown {
+  border: 10px solid #512a00;
+}
+
+.fruit_orange {
+  border: 10px solid #e97e13;
+}
+
+.fruit_cyan {
+  border: 10px solid #3791eb;
+}
+
+.fruit_blue {
+  border: 10px solid #1118e7;
 }
 
 .fruit__info {

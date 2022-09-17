@@ -7,7 +7,7 @@ const sortTimeLabel = document.querySelector('.sort__time'); // поле с вр
 const sortChangeButton = document.querySelector('.sort__change__btn'); // кнопка смены сортировки
 const sortActionButton = document.querySelector('.sort__action__btn'); // кнопка сортировки
 const kindInput = document.querySelector('.kind__input'); // поле с названием вида
-const colorInput = document.querySelector('.color__input'); // поле с названием цвета
+const colorInput = document.querySelector('#color__input'); // поле с названием цвета
 const weightInput = document.querySelector('.weight__input'); // поле с весом
 const addActionButton = document.querySelector('.add__action__btn'); // кнопка добавления
 
@@ -21,22 +21,40 @@ let fruitsJSON = `[
 ]`;
 
 // преобразование JSON в объект JavaScript
+
 let fruits = JSON.parse(fruitsJSON);
 
 /*** ОТОБРАЖЕНИЕ ***/
 
 // отрисовка карточек
 const display = () => {
-  // TODO: очищаем fruitsList от вложенных элементов,
-  // чтобы заполнить актуальными данными из fruits
-
+  fruitsList.innerHTML = "";
   for (let i = 0; i < fruits.length; i++) {
-    // TODO: формируем новый элемент <li> при помощи document.createElement,
-    // и добавляем в конец списка fruitsList при помощи document.appendChild
+    let fruit = document.createElement('li');
+    fruit.innerHTML = `Фрукт ` + i + `<br>` + fruits[i].kind +`<br>`+ fruits[i].color +`<br>`+ `Вес: ` + fruits[i].weight + ` кг`;
+    function color(color, typeColor) { 
+      if (fruits[i].color == color) {
+      fruit.className = typeColor;
+      }
+    };
+
+    color("фиолетовый", "fruit__item fruit_violet");
+    color("зеленый", "fruit__item fruit_green");
+    color("розово-красный", "fruit__item fruit_carmazin");
+    color("желтый", "fruit__item fruit_yellow");
+    color("светло-коричневый", "fruit__item fruit_lightbrown"); 
+    color("розовый", "fruit__item fruit_pink"); 
+    color("красный", "fruit__item fruit_red"); 
+    color("коричневый", "fruit__item fruit_brown"); 
+    color("оранжевый", "fruit__item fruit_orange"); 
+    color("голубой", "fruit__item fruit_cyan"); 
+    color("синий", "fruit__item fruit_blue"); 
+    
+    fruitsList.appendChild(fruit);
   }
 };
 
-// первая отрисовка карточек
+ //первая отрисовка карточек
 display();
 
 /*** ПЕРЕМЕШИВАНИЕ ***/
@@ -49,18 +67,15 @@ const getRandomInt = (min, max) => {
 // перемешивание массива
 const shuffleFruits = () => {
   let result = [];
-
-  // ATTENTION: сейчас при клике вы запустите бесконечный цикл и браузер зависнет
   while (fruits.length > 0) {
-    // TODO: допишите функцию перемешивания массива
-    //
-    // Подсказка: находим случайный элемент из fruits, используя getRandomInt
-    // вырезаем его из fruits и вставляем в result.
-    // ex.: [1, 2, 3], [] => [1, 3], [2] => [3], [2, 1] => [], [2, 1, 3]
-    // (массив fruits будет уменьшатся, а result заполняться)
-  }
-
-  fruits = result;
+    let random = getRandomInt(0, fruits.length-1);
+    result.unshift(...fruits.splice(random, 1));
+    }
+    fruits = result;
+      if (result === JSON.stringify(fruits)) {
+        alert('Порядок не изменился!');
+      }
+      else display();
 };
 
 shuffleButton.addEventListener('click', () => {
@@ -72,9 +87,12 @@ shuffleButton.addEventListener('click', () => {
 
 // фильтрация массива
 const filterFruits = () => {
-  fruits.filter((item) => {
-    // TODO: допишите функцию
+  let filter = fruits.filter((item) => {
+    const minweight = document.querySelector('.minweight__input'); 
+    const maxweight = document.querySelector('.maxweight__input'); 
+    return item.weight >= minweight.value && item.weight <= maxweight.value;  
   });
+  fruits = filter;
 };
 
 filterButton.addEventListener('click', () => {
@@ -88,22 +106,93 @@ let sortKind = 'bubbleSort'; // инициализация состояния в
 let sortTime = '-'; // инициализация состояния времени сортировки
 
 const comparationColor = (a, b) => {
-  // TODO: допишите функцию сравнения двух элементов по цвету
+  return priority[a.color] > priority[b.color];
+};
+
+const priority = {
+  "розовый": 0,
+  "розово-красный": 1,
+  "красный": 2,
+  "коричневый": 3,
+  "светло-коричневый": 4,
+  "оранжевый": 5,
+  "желтый": 6,
+  "зеленый": 7,
+  "голубой": 8,
+  "синий": 9,
+  "фиолетовый": 10
+};
+
+function quickSort_function(fruits, partition, left, right) {
+ 
+  function swap(fruits, firstIndex, secondIndex) { // функция обмена элементов
+    const temp = fruits[firstIndex];
+    fruits[firstIndex] = fruits[secondIndex];
+    fruits[secondIndex] = temp;
+  };
+
+  function partition(fruits, left, right) {  // функция разделитель
+    var pivot = fruits[Math.floor((right + left) / 2)],
+      i = left,
+      j = right;
+        while (i <= j) {
+          while (fruits[i] < pivot) {
+          i++;
+          }
+          while (fruits[j] > pivot) {
+          j--;
+          }
+          if (i <= j) {
+          swap(fruits, i, j);
+          i++;
+          j--;
+          }
+        }
+  return i;
+  };
+  var index;
+    if (fruits.length > 1) {
+      left = typeof left != "number" ? 0 : left;
+      right = typeof right != "number" ? fruits.length - 1 : right;
+      index = partition(fruits, left, right);
+        if (left < index - 1) {
+          quickSort_function(fruits, left, index - 1);
+        }
+        if (index < right) {
+          quickSort_function(fruits, left, right);
+        }
+    }
+  return fruits;
 };
 
 const sortAPI = {
-  bubbleSort(arr, comparation) {
-    // TODO: допишите функцию сортировки пузырьком
+  bubbleSort(fruits, comparation) {
+    // функция сортировки пузырьком
+    const n = fruits.length;
+    for (let i = 0; i < n-1; i++) { 
+      for (let j = 0; j < n-1-i; j++) { 
+        if (comparation(fruits[j], fruits[j+1])) { 
+          let temp = fruits[j+1]; 
+          fruits[j+1] = fruits[j]; 
+          fruits[j] = temp; 
+        }
+      }   
+    }         
   },
 
-  quickSort(arr, comparation) {
-    // TODO: допишите функцию быстрой сортировки
-  },
+  //quickSort пришлось вынести в отдельную функцию quickSort_function, 
+  //когда она полностью в const sortAPI => не сортировала вообще
+  //сейчас сортирует некорректно, не по цвету, прошу помочь исправить
+
+  quickSort(fruits, partition, left, right) {
+    //функция быстрой сортировки
+      quickSort_function(fruits, partition, left, right);
+  }, 
 
   // выполняет сортировку и производит замер времени
-  startSort(sort, arr, comparation) {
+  startSort(sort, fruits, comparation, partition) {
     const start = new Date().getTime();
-    sort(arr, comparation);
+    sort(fruits, comparation, partition);
     const end = new Date().getTime();
     sortTime = `${end - start} ms`;
   },
@@ -115,20 +204,42 @@ sortTimeLabel.textContent = sortTime;
 
 sortChangeButton.addEventListener('click', () => {
   // TODO: переключать значение sortKind между 'bubbleSort' / 'quickSort'
+  if(sortKind == 'bubbleSort'){
+    sortKind = 'quickSort';
+  }
+  else {
+    sortKind = 'bubbleSort';
+  };
+  sortKindLabel.textContent = sortKind;
+  sortTime = '';
+  sortTimeLabel.textContent = sortTime;
 });
 
 sortActionButton.addEventListener('click', () => {
   // TODO: вывести в sortTimeLabel значение 'sorting...'
+  sortTimeLabel.textContent = 'sorting...';
   const sort = sortAPI[sortKind];
   sortAPI.startSort(sort, fruits, comparationColor);
   display();
-  // TODO: вывести в sortTimeLabel значение sortTime
+  // вывести в sortTimeLabel значение sortTime
+  sortTimeLabel.textContent = sortTime;
+  console.log(sortTime);
 });
+
 
 /*** ДОБАВИТЬ ФРУКТ ***/
 
 addActionButton.addEventListener('click', () => {
-  // TODO: создание и добавление нового фрукта в массив fruits
-  // необходимые значения берем из kindInput, colorInput, weightInput
+  // создание и добавление нового фрукта в массив fruits
+  if (kindInput.value == '' || colorInput.value == '' || weightInput.value == '') {
+		alert('Заполните все поля!');
+	}
+	else {
+		fruits.push({ "kind": kindInput.value, "color": colorInput.value, "weight": weightInput.value });
+	}
   display();
+  // очистить форму
+  kindInput.value = '';
+  colorInput.value = '';
+  weightInput.value = '';
 });
